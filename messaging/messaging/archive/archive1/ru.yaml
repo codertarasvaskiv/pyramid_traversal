@@ -1,0 +1,48 @@
+- procurementMethod: open
+  name_ru: Допороговые закупки
+  procurementMethodType: belowThreshold
+  autoInitiated: false
+- procurementMethod: open
+  name_ru: Открытые торги
+  procurementMethodType: aboveThresholdUA
+  autoInitiated: false
+- procurementMethod: open
+  name_ru: Открытые торги с публикацией на английском языке
+  procurementMethodType: aboveThresholdEU
+  autoInitiated: false
+- procurementMethod: limited
+  name_ru: Переговорная процедура
+  procurementMethodType: negotiation
+  autoInitiated: false
+- procurementMethod: limited
+  name_ru: Переговорная процедура по насущной необходимости
+  procurementMethodType: negotiation.quick
+  autoInitiated: false
+- procurementMethod: open
+  name_ru: Переговорная процедура для нужд обороны
+  procurementMethodType: aboveThresholdUA.defense
+  autoInitiated: false
+- procurementMethod: open
+  name_ru: Конкурентный диалог 1-ый этап
+  procurementMethodType: competitiveDialogueUA
+  autoInitiated: false
+- procurementMethod: open
+  name_ru: Конкурентный диалог с публикацией на английском языке 1-ый этап
+  procurementMethodType: competitiveDialogueEU
+  autoInitiated: false
+- procurementMethod: selective
+  name_ru: Конкуретный диалог 2-ой этап
+  procurementMethodType: competitiveDialogueUA.stage2
+  autoInitiated: true
+- procurementMethod: selective
+  name_ru: Конкурентный диалог с публикацией на английском языке 2-ой этап
+  procurementMethodType: competitiveDialogueEU.stage2
+  autoInitiated: true
+- procurementMethod: limited
+  name_ru: Отчет о заключенном договоре
+  procurementMethodType: reporting
+  autoInitiated: false
+- procurementMethod: open
+  name_ru: Открытые торги для закупки энергосервиса
+  procurementMethodType: esco
+  autoInitiated: false

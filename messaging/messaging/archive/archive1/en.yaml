@@ -1,0 +1,48 @@
+- procurementMethod: open
+  autoInitiated: false
+  name_en: Below threshold procurement
+  procurementMethodType: belowThreshold
+- procurementMethod: open
+  autoInitiated: false
+  name_en: Open procedure
+  procurementMethodType: aboveThresholdUA
+- procurementMethod: open
+  autoInitiated: false
+  name_en: Open procedure with publication in English
+  procurementMethodType: aboveThresholdEU
+- procurementMethod: limited
+  autoInitiated: false
+  name_en: Negotiated procedure
+  procurementMethodType: negotiation
+- procurementMethod: limited
+  autoInitiated: false
+  name_en: Negotiated procedure in urgent cases
+  procurementMethodType: negotiation.quick
+- procurementMethod: open
+  autoInitiated: false
+  name_en: Negotiated procedure for defence purposes
+  procurementMethodType: aboveThresholdUA.defense
+- procurementMethod: open
+  autoInitiated: false
+  name_en: Competitive dialogue 1st stage
+  procurementMethodType: competitiveDialogueUA
+- procurementMethod: open
+  autoInitiated: false
+  name_en: Competitive dialogue with publication in English 1st stage
+  procurementMethodType: competitiveDialogueEU
+- procurementMethod: selective
+  autoInitiated: true
+  name_en: Competitive dialogue 2nd stage
+  procurementMethodType: competitiveDialogueUA.stage2
+- procurementMethod: selective
+  autoInitiated: true
+  name_en: Competitive dialogue with publication in English 2nd stage
+  procurementMethodType: competitiveDialogueEU.stage2
+- procurementMethod: limited
+  autoInitiated: false
+  name_en: Contract report
+  procurementMethodType: reporting
+- procurementMethod: open
+  autoInitiated: false
+  name_en: Open procurement of energy services
+  procurementMethodType: esco

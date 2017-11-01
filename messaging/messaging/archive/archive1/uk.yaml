@@ -1,0 +1,48 @@
+- procurementMethod: open
+  autoInitiated: false
+  procurementMethodType: belowThreshold
+  name_uk: Допорогові закупівлі
+- procurementMethod: open
+  autoInitiated: false
+  procurementMethodType: aboveThresholdUA
+  name_uk: Відкриті торги
+- procurementMethod: open
+  autoInitiated: false
+  procurementMethodType: aboveThresholdEU
+  name_uk: Відкриті торги з публікацією англійською мовою
+- procurementMethod: limited
+  autoInitiated: false
+  procurementMethodType: negotiation
+  name_uk: Переговорна процедура
+- procurementMethod: limited
+  autoInitiated: false
+  procurementMethodType: negotiation.quick
+  name_uk: Переговорна процедура за нагальною потребою
+- procurementMethod: open
+  autoInitiated: false
+  procurementMethodType: aboveThresholdUA.defense
+  name_uk: Переговорна процедура для потреб оборони
+- procurementMethod: open
+  autoInitiated: false
+  procurementMethodType: competitiveDialogueUA
+  name_uk: Конкурентний діалог 1-ий етап
+- procurementMethod: open
+  autoInitiated: false
+  procurementMethodType: competitiveDialogueEU
+  name_uk: Конкурентний діалог з публікацією англійською мовою 1-ий етап
+- procurementMethod: selective
+  autoInitiated: true
+  procurementMethodType: competitiveDialogueUA.stage2
+  name_uk: Конкуретний діалог 2-ий етап
+- procurementMethod: selective
+  autoInitiated: true
+  procurementMethodType: competitiveDialogueEU.stage2
+  name_uk: Конкурентний діалог з публікацією англійською мовою 2-ий етап
+- procurementMethod: limited
+  autoInitiated: false
+  procurementMethodType: reporting
+  name_uk: Звіт про укладений договір
+- procurementMethod: open
+  autoInitiated: false
+  procurementMethodType: esco
+  name_uk: Відкриті торги для закупівлі енергосервісу

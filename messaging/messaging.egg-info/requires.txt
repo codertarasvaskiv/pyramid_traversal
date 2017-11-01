@@ -1,0 +1,7 @@
+bcrypt
+cornice
+couchdb-schematics==1.1.1
+pyramid
+pyramid_jinja2
+schematics==1.1.1
+waitress
