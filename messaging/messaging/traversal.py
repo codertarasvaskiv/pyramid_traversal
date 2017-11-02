@@ -24,7 +24,7 @@ class Root(object):
 def root_factory(request):
     print("inside root_factory")
     request.validated['corp_src'] = {}
-    root = Root(request);import pdb;pdb.set_trace()
+    root = Root(request)
     if not request.matchdict or not request.matchdict.get('id'):
         return root
     request.validated['id'] = request.matchdict['id']

@@ -4,6 +4,7 @@ from pyramid.security import (
     Deny,
     Everyone,
 )
+from couchdb_schematics.document import SchematicsDocument
 from schematics.models import Model as SchematicsModel
 from schematics.transforms import blacklist, convert
 from schematics.types import StringType
@@ -20,7 +21,7 @@ class Department(SchematicsModel):
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
 
-class Corporation(SchematicsModel):
+class Corporation(SchematicsDocument, SchematicsModel):
 
     class Options:
         roles = {

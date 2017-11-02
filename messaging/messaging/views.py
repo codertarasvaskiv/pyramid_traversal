@@ -1,4 +1,4 @@
-from cornice.resource import resource
+from cornice.resource import resource, view
 from couchdb_schematics.document import SchematicsDocument
 from pyramid.security import (
     ALL_PERMISSIONS,
@@ -12,6 +12,7 @@ from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.view import view_config
 from .models import Corporation
 from .traversal import Root, root_factory
+from .validators import validate_corporation_data
 from .utils import generate_id
 
 
@@ -24,14 +25,16 @@ def view_root(context, request):
     return {'key': 'this is root'}
 
 
-@resource(collection_path='/corp', path='/corp/{id}', factory=root_factory)
+@resource(name='Corporations', path='/corp', factory=root_factory)
 class CorporationResourse(object):
 
     def __init__(self, request, context):
         print('self init was called')
+        self.server = request.registry.couchdb_server
         self.context = context
         self.request = request
         self.db = request.registry.db
+        #self.server_id = request.registry.server_id
 
 
     # def __getitem__(self, key):
@@ -59,10 +62,13 @@ class CorporationResourse(object):
         corporation.store(self.request.registry.db)
         return True
 
+    @view(content_type="application/json", validators=(validate_corporation_data,))
     def post(self):
+        print(self.request.validated, ' self.request.validated')
         corporation = self.request.validated['corporation']
         corporation.id = generate_id()
         corporation.store(self.request.registry.db)
+        return True
 
 
     def patch(self):
