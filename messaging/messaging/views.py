@@ -50,7 +50,6 @@ class CorporationResourse(object):
         return {'corporations': _CORPORATIONS.keys()}
 
     def get(self):
-        print 'simple get'
         return dict(self.context.__dict__['_data'])
 
     def collection_post(self):
@@ -64,11 +63,10 @@ class CorporationResourse(object):
 
     @view(content_type="application/json", validators=(validate_corporation_data,))
     def post(self):
-        print(self.request.validated, ' self.request.validated')
         corporation = self.request.validated['corporation']
         corporation.id = generate_id()
         corporation.store(self.request.registry.db)
-        return True
+        return true
 
 
     def patch(self):

@@ -25,6 +25,7 @@ class Corporation(SchematicsDocument, SchematicsModel):
 
     class Options:
         roles = {
+            'create': blacklist('id', 'doc_type'),
             'view': blacklist('doc_type', '_rev', '_id'),
         }
 
@@ -38,10 +39,10 @@ class Corporation(SchematicsDocument, SchematicsModel):
     # def __init__(self, request, context=None):
     #     self.request = request
 
-    @serializable(serialized_name='id')
-    def doc_id(self):
-        """A property that is serialized by schematics exports."""
-        return self._id
+    # @serializable(serialized_name='id')
+    # def doc_id(self):
+    #     """A property that is serialized by schematics exports."""
+    #     return self._id
 
 
     def __acl__(self):
