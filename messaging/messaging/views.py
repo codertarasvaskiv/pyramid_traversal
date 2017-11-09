@@ -50,7 +50,7 @@ class CorporationResourse(object):
         return {'corporations': _CORPORATIONS.keys()}
 
     def get(self):
-        return dict(self.context.__dict__['_data'])
+        return dict(self.context)
 
     def collection_post(self):
         print('collection post')
@@ -66,7 +66,9 @@ class CorporationResourse(object):
         corporation = self.request.validated['corporation']
         corporation.id = generate_id()
         corporation.store(self.request.registry.db)
-        return true
+        return {
+            'data': corporation.serialize()
+        }
 
 
     def patch(self):

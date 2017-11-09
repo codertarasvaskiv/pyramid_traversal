@@ -2,17 +2,19 @@
 def validate_corporation_data(request, **kwargs):
     try:
         json = request.json_body
-    except ValueError, e:
-        request.errors.add('body', 'data', e.message)
-        request.errors.status = 422
-    if not isinstance(json, dict) or 'data' not in json or not isinstance(json.get('data'), dict):
-        request.errors.add('body', 'data', "Data not available")
-        request.errors.status = 422
-    request.validated['json_data'] = json['data']
-    data = json['data']
 
-    model = request.corporation_from_data(data, create=False)
-    data = validate_data(request, model, data=data)
+        if not isinstance(json, dict) or 'data' not in json or not isinstance(json.get('data'), dict):
+            request.errors.add('body', 'data', "Data not available")
+            request.errors.status = 422
+        else:
+            request.validated['json_data'] = json['data']
+            data = json['data']
+
+            model = request.corporation_from_data(data, create=False)
+            data = validate_data(request, model, data=data)
+    except ValueError, e:
+        request.errors.add('body', 'data', 'no json body was provided')
+        request.errors.status = 422
 
 
 def validate_data(request, model, partial=False, data=None):
