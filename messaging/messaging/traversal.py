@@ -11,7 +11,8 @@ from pyramid.security import (
 class Root(object):
     __parent__ = __name__ = None
     __acl__ = [
-         (Allow, Everyone, ALL_PERMISSIONS),
+        (Deny, Everyone, 'edit'),
+        #(Allow, 'group:editors', 'edit'),
     ]
 
     def __init__(self, request):
@@ -25,11 +26,11 @@ def root_factory(request):
     print("inside root_factory")
     request.validated['corp_src'] = {}
     root = Root(request)
-    if not request.matchdict or not request.matchdict.get('id'):
+    if not request.matchdict or not request.matchdict.get('corp_id'):
         return root
-    request.validated['id'] = request.matchdict['id']
+    request.validated['id'] = request.matchdict['corp_id']
     corporation = request.corporation
-    print('views.py def root_factory 63')
+    print('traversal.py 33')
     corporation.__parent__ = root
     request.validated['corporation'] = request.validated['db_doc'] = corporation
     print('exit root_factory')

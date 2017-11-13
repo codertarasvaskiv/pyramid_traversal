@@ -25,8 +25,9 @@ class Corporation(SchematicsDocument, SchematicsModel):
 
     class Options:
         roles = {
-            'create': blacklist('id', 'doc_type'),
-            'view': blacklist('doc_type', '_rev', '_id'),
+            'create': (blacklist('id', 'doc_type')),
+            'view': (blacklist('doc_type', '_rev', '_id') + SchematicsDocument.Options.roles['embedded'] + blacklist("__parent__")),
+            'public': blacklist('_id', '_rev', 'doc_type')
         }
 
     departments = ListType(ModelType(Department), default=list())
@@ -36,8 +37,8 @@ class Corporation(SchematicsDocument, SchematicsModel):
     _rev = StringType()
     doc_type = StringType()
 
-    def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+    # def __acl__(self):
+    #     return [(Allow, 'editor', 'view')]
 
 
     def import_data(self, raw_data, **kw):

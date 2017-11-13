@@ -5,6 +5,7 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 
+from .design import sync_design
 from .security import groupfinder
 
 from .models import Corporation
@@ -15,6 +16,8 @@ def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     config = Configurator(settings=settings)
+    config.set_root_factory(root_factory)
+
 
     # security policies
     authn_policy = AuthTktAuthenticationPolicy(
@@ -24,7 +27,7 @@ def main(global_config, **settings):
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
 
-    config.set_root_factory(root_factory)
+
 
     config.add_request_method(extract_corporation, 'corporation', reify=True)
     config.add_request_method(corporation_from_data)
@@ -38,6 +41,7 @@ def main(global_config, **settings):
     if settings['couchdb.db'] not in server:
         server.create(settings['couchdb.db'])
     config.registry.db = server[settings['couchdb.db']]
+    sync_design(config.registry.db)
 
 
     config.include('cornice')
