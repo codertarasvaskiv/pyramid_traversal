@@ -43,7 +43,10 @@ class CorporationsResourse(MainResource):
         self.VIEW_MAP = VIEW_MAP
 
     def __acl__(self):
-        return [(Allow, 'editor', 'view')]
+        return [
+            (Allow, 'editor', 'view'),
+            (Allow, 'g:admin', 'view'),
+        ]
 
     @view(content_type="application/json")
     def get(self):
@@ -60,7 +63,7 @@ class CorporationsResourse(MainResource):
         return data
 
 
-    @view(content_type="application/json", validators=(validate_corporation_data,))
+    @view(content_type="application/json", permission='create', validators=(validate_corporation_data,))
     def post(self):
         corporation = self.request.validated['corporation']
         corporation.id = generate_id()

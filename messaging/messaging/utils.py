@@ -1,6 +1,7 @@
 from pyramid.exceptions import URLDecodeError
 from pyramid.compat import decode_path_info
 from uuid import uuid4
+from webob.multidict import NestedMultiDict
 
 
 
@@ -52,3 +53,16 @@ def extract_corporation(request):
 
 def generate_id():
     return uuid4().hex
+
+def request_params(request):
+    try:
+        params = NestedMultiDict(request.GET, request.POST)
+    except UnicodeDecodeError:
+        request.errors.add('body', 'data', 'could not decode params')
+        request.errors.status = 422
+        raise error_handler(request.errors, False)
+    except Exception, e:
+        request.errors.add('body', str(e.__class__.__name__), str(e))
+        request.errors.status = 422
+        raise error_handler(request.errors, False)
+    return params

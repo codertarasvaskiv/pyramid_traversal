@@ -11,8 +11,8 @@ from pyramid.security import (
 class Root(object):
     __parent__ = __name__ = None
     __acl__ = [
-        (Deny, Everyone, 'edit'),
-        #(Allow, 'group:editors', 'edit'),
+        #(Deny, Everyone, 'edit'),
+        (Allow, 'g:admin', 'create'),
     ]
 
     def __init__(self, request):

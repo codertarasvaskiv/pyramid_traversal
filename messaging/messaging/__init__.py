@@ -1,15 +1,15 @@
 """Main entry point
 """
 from couchdb import Server as CouchdbServer
-from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 
+from .auth import AuthenticationPolicy
 from .design import sync_design
 from .security import groupfinder
 
 from .models import Corporation
-from .utils import extract_corporation, corporation_from_data
+from .utils import extract_corporation, corporation_from_data, request_params
 from .traversal import root_factory
 
 def main(global_config, **settings):
@@ -20,15 +20,13 @@ def main(global_config, **settings):
 
 
     # security policies
-    authn_policy = AuthTktAuthenticationPolicy(
-        settings['messaging.secret'], callback=groupfinder, hashalg='sha512'
-    )
+    authn_policy = AuthenticationPolicy()
     authz_policy = ACLAuthorizationPolicy()
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
 
 
-
+    config.add_request_method(request_params, 'params', reify=True)
     config.add_request_method(extract_corporation, 'corporation', reify=True)
     config.add_request_method(corporation_from_data)
     config.registry.model = Corporation
