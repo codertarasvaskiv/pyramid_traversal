@@ -4,7 +4,7 @@ from couchdb import Server as CouchdbServer
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 
-from .auth import AuthenticationPolicy
+from .auth import AuthenticationPolicy, authenticated_role
 from .design import sync_design
 from .security import groupfinder
 
@@ -24,6 +24,8 @@ def main(global_config, **settings):
     authz_policy = ACLAuthorizationPolicy()
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
+
+    config.add_request_method(authenticated_role, reify=True)
 
 
     config.add_request_method(request_params, 'params', reify=True)

@@ -6,7 +6,6 @@ from webob.multidict import NestedMultiDict
 
 
 def corporation_from_data(request, data, raise_error=True, create=True):
-    print('utils 7 def corporation_from_data ')
     model = request.registry.model
     if model is None and raise_error:
         request.errors.add('data', 'procurementMethodType', 'Not implemented')

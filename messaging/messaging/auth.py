@@ -13,7 +13,8 @@ class AuthenticationPolicy(BasicAuthAuthenticationPolicy):
         config = ConfigParser()
         self.users = {
             'taras': {'name': 'admin', 'group': 'admin'},
-            'taras2': {'name': 'editor', 'group': 'editor'}
+            'taras2': {'name': 'editor', 'group': 'editor'},
+            'oleg': {'name': 'oleg', 'group': 'view_list'}
         }
 
 
@@ -29,7 +30,7 @@ class AuthenticationPolicy(BasicAuthAuthenticationPolicy):
     def check(self, user, request):
 
         token = request.params.get('acc_token')
-        auth_groups = ['g:{}'.format(user['group'])]
+        auth_groups = ['{}'.format(user['group'])]
 
         if not token:
             token = request.headers.get('X-Access-Token')
@@ -41,9 +42,10 @@ class AuthenticationPolicy(BasicAuthAuthenticationPolicy):
                         json = None
                     token = isinstance(json, dict) and json.get('access', {}).get('token')
                 if not token:
+                    print 'not token ', auth_groups
                     return auth_groups
-        auth_groups.append('{}_{}'.format(user['name'], token))
 
+        auth_groups.append('{}'.format(token))
         return auth_groups
 
     def callback(self, username, request):
@@ -63,3 +65,15 @@ class AuthenticationPolicy(BasicAuthAuthenticationPolicy):
         username = authorization
         return username
 
+
+# inside wiew is called
+def authenticated_role(request):
+    # principals = request.effective_principals
+    # if hasattr(request, 'context'):
+    #     roles = get_local_roles(request.context)
+    #     local_roles = [roles[i] for i in reversed(principals) if i in roles]
+    #     if local_roles:
+    #         return local_roles[0]
+    # groups = [g for g in reversed(principals) if g.startswith('g:')]
+    print 'authenticated_role(request) is called'
+    return 'taras3'

@@ -13,32 +13,43 @@ from schematics.types.serializable import serializable
 
 
 
-class Department(SchematicsModel):
+class Model(SchematicsModel):
+    class Options(object):
+        """Export options for Document."""
+        serialize_when_none = False
 
-    name = StringType()
-    title = StringType()
+
+class Department(Model):
+
+    depName = StringType()
+    depTitle = StringType()
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
 
-class Corporation(SchematicsDocument, SchematicsModel):
+class Corporation(SchematicsDocument, Model):
 
     class Options:
         roles = {
-            'create': (blacklist('id', 'doc_type')),
-            'view': (blacklist('doc_type', '_rev', '_id') + SchematicsDocument.Options.roles['embedded'] + blacklist("__parent__")),
+            'create': blacklist('_id', '_rev', 'doc_type'),
+            'view_one': (blacklist('_rev', '_id', 'doc_id', 'doc_type', 'owner_token') + SchematicsDocument.Options.roles['embedded'] + blacklist("__parent__")),
             'public': blacklist('_id', '_rev', 'doc_type')
         }
 
-    departments = ListType(ModelType(Department), default=list())
+    departments = ListType(ModelType(Department), default=list(), required=False)
     name = StringType()
     title = StringType()
+    owner_token = StringType()
     _id = StringType()
     _rev = StringType()
     doc_type = StringType()
 
-    # def __acl__(self):
-    #     return [(Allow, 'editor', 'view')]
+    def __acl__(self):
+        acl = []
+        acl.extend([
+            (Allow, '{}'.format(self.owner_token), 'view_one')
+        ])
+        return acl
 
 
     def import_data(self, raw_data, **kw):

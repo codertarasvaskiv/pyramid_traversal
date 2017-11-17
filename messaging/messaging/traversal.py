@@ -12,7 +12,8 @@ class Root(object):
     __parent__ = __name__ = None
     __acl__ = [
         #(Deny, Everyone, 'edit'),
-        (Allow, 'g:admin', 'create'),
+        (Allow, 'admin', 'create'),
+        (Allow, Everyone, 'view_list'),
     ]
 
     def __init__(self, request):

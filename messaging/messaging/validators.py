@@ -1,4 +1,4 @@
-
+from .utils import generate_id
 def validate_corporation_data(request, **kwargs):
     try:
         json = request.json_body
@@ -11,6 +11,7 @@ def validate_corporation_data(request, **kwargs):
             data = json['data']
 
             model = request.corporation_from_data(data, create=False)
+            print('validators.py validate_corporation_data 14')
             data = validate_data(request, model, data=data)
     except ValueError, e:
         request.errors.add('body', 'data', 'no json body was provided')
@@ -18,7 +19,7 @@ def validate_corporation_data(request, **kwargs):
 
 
 def validate_data(request, model, partial=False, data=None):
-    print('validating data')
+
     try:
         if partial and isinstance(request.context, model):
             initial_data = request.context.serialize()
@@ -30,10 +31,11 @@ def validate_data(request, model, partial=False, data=None):
         else:
             m = model(data)
             m.__parent__ = request.context
+            m.owner_token =  generate_id()
             m.validate()
             method = m.serialize
             role = 'create'
-    except Exception as e:
+    except KeyError as e:
         request.errors.status = 422
     else:
         if hasattr(type(m), '_options') and role not in type(m)._options.roles:

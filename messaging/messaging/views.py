@@ -42,20 +42,14 @@ class CorporationsResourse(MainResource):
         self.__acl__ = [(Allow, 'editor', 'view')]
         self.VIEW_MAP = VIEW_MAP
 
-    def __acl__(self):
-        return [
-            (Allow, 'editor', 'view'),
-            (Allow, 'g:admin', 'view'),
-        ]
-
-    @view(content_type="application/json")
+    @view(content_type="application/json", permission='view_list')
     def get(self):
         view_map = self.VIEW_MAP
         list_view = view_map[u'_all_']
         view = partial(list_view, self.db)
-        view()
+
         results = [
-            {'id': i.id, 'name': i.value['name'], 'title': i.value['title']}  for i in view()
+            i['value']  for i in view()
         ]
         data = {
             'data': results
@@ -69,7 +63,7 @@ class CorporationsResourse(MainResource):
         corporation.id = generate_id()
         corporation.store(self.request.registry.db)
         return {
-            'data': corporation.serialize()
+            'data': { 'owner_token': corporation.owner_token }
         }
 
 
@@ -86,13 +80,12 @@ class CorporationResourse(MainResource):
     def __init__(self, request, context):
         super(CorporationResourse, self).__init__(request, context)
 
-    def __acl__(self):
-        return [(Deny, Everyone, 'view')]
-
+    # def __acl__(self):
+    #     return [(Deny, Everyone, 'view')]
+    @view(content_type="application/json", permission='view_one')
     def get(self):
-        #import pdb;pdb.set_trace()
         return {
-            "data": self.context.serialize()
+            "data": self.context.serialize('view_one')
         }
 
     @view(content_type="application/json", validators=(validate_corporation_data,))
