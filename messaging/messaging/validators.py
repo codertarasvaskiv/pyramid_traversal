@@ -1,21 +1,24 @@
+from cornice.util import json_error
 from .utils import generate_id
-def validate_corporation_data(request, **kwargs):
-    try:
-        json = request.json_body
 
-        if not isinstance(json, dict) or 'data' not in json or not isinstance(json.get('data'), dict):
-            request.errors.add('body', 'data', "Data not available")
-            request.errors.status = 422
-        else:
-            request.validated['json_data'] = json['data']
-            data = json['data']
 
-            model = request.corporation_from_data(data, create=False)
-            print('validators.py validate_corporation_data 14')
-            data = validate_data(request, model, data=data)
-    except ValueError, e:
-        request.errors.add('body', 'data', 'no json body was provided')
-        request.errors.status = 422
+def validate_create_corporation_data(request, **kwargs):
+
+    data = validate_json_data(request) # check if "data" is json type
+
+    model = request.corporation_from_data(data, create=False)
+
+    data = validate_data(request, model, data=data)
+
+def validate_patch_corporation_data(request, **kwargs):
+
+    data = validate_json_data(request)
+
+    # additional logic with patch. In objects logic.
+
+
+    #                                                 partial=True
+    return validate_data(request, type(request.corporation), True, data)
 
 
 def validate_data(request, model, partial=False, data=None):
@@ -31,7 +34,7 @@ def validate_data(request, model, partial=False, data=None):
         else:
             m = model(data)
             m.__parent__ = request.context
-            m.owner_token =  generate_id()
+            m.owner_token = generate_id()
             m.validate()
             method = m.serialize
             role = 'create'
@@ -49,3 +52,21 @@ def validate_data(request, model, partial=False, data=None):
                 m.__parent__ = request.context
                 request.validated[model.__name__.lower()] = m
     return data
+
+
+
+# here just validation if request.json_body is json type. Return json without "data" prefix.
+# if there is error then return it with serialization
+def validate_json_data(request):
+    try:
+        json = request.json_body
+    except ValueError, e:
+        request.errors.add('body', 'data', e.message)
+        request.errors.status = 422
+        raise json_error(request.errors)
+    if not isinstance(json, dict) or 'data' not in json or not isinstance(json.get('data'), dict):
+        request.errors.add('body', 'data', "Data not available")
+        request.errors.status = 422
+        raise json_error(request.errors)
+    request.validated['json_data'] = json['data']
+    return json['data']

@@ -13,7 +13,7 @@ class AuthenticationPolicy(BasicAuthAuthenticationPolicy):
         config = ConfigParser()
         self.users = {
             'taras': {'name': 'admin', 'group': 'admin'},
-            'taras2': {'name': 'editor', 'group': 'editor'},
+            'taras2': {'name': 'editor', 'group': 'edit'},
             'oleg': {'name': 'oleg', 'group': 'view_list'}
         }
 
@@ -46,6 +46,7 @@ class AuthenticationPolicy(BasicAuthAuthenticationPolicy):
                     return auth_groups
 
         auth_groups.append('{}'.format(token))
+        print 'auth_groups ', auth_groups
         return auth_groups
 
     def callback(self, username, request):
@@ -66,14 +67,33 @@ class AuthenticationPolicy(BasicAuthAuthenticationPolicy):
         return username
 
 
-# inside wiew is called
+# inside view is called
+# also is called in patch request to make changes
+# before context goes to view
 def authenticated_role(request):
-    # principals = request.effective_principals
-    # if hasattr(request, 'context'):
-    #     roles = get_local_roles(request.context)
-    #     local_roles = [roles[i] for i in reversed(principals) if i in roles]
-    #     if local_roles:
-    #         return local_roles[0]
-    # groups = [g for g in reversed(principals) if g.startswith('g:')]
-    print 'authenticated_role(request) is called'
-    return 'taras3'
+
+    principals = request.effective_principals # principals is the same as groups
+    if hasattr(request, 'context'):
+        roles = get_local_roles(request.context)
+        local_roles = [roles[i] for i in reversed(principals) if i in roles]
+        if local_roles:
+            return local_roles[0]
+    groups = [g for g in reversed(principals)]
+    return groups[0]
+
+
+# returns specific roles for each context object
+def get_local_roles(context):
+    from pyramid.location import lineage
+    roles = {}
+    for location in lineage(context):
+        try:
+            local_roles = location.__local_roles__
+        except AttributeError:
+            continue
+        if local_roles and callable(local_roles):
+            local_roles = local_roles()
+        roles.update(local_roles)
+    # roles = {'26714998e9e1408e949d92f5dddbe747': 'edit'}
+    # this is specific role for each context object
+    return roles

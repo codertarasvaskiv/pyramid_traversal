@@ -14,7 +14,7 @@ from pyramid.view import view_config
 from .design import VIEW_MAP
 from .models import Corporation
 from .traversal import Root, root_factory
-from .validators import validate_corporation_data
+from .validators import validate_create_corporation_data, validate_patch_corporation_data
 from .utils import generate_id
 
 
@@ -57,7 +57,7 @@ class CorporationsResourse(MainResource):
         return data
 
 
-    @view(content_type="application/json", permission='create', validators=(validate_corporation_data,))
+    @view(content_type="application/json", permission='create', validators=(validate_create_corporation_data,))
     def post(self):
         corporation = self.request.validated['corporation']
         corporation.id = generate_id()
@@ -66,12 +66,6 @@ class CorporationsResourse(MainResource):
             'data': { 'owner_token': corporation.owner_token }
         }
 
-
-    def patch(self):
-        print('patch 42')
-        self.context.__dict__['_data']['name'] = 'new name'
-        print(type(self.context))
-        self.context.store(self.db)
 
 
 @resource(name='Corporation', path='/corp/{corp_id}', factory=root_factory)
@@ -88,19 +82,12 @@ class CorporationResourse(MainResource):
             "data": self.context.serialize('view_one')
         }
 
-    @view(content_type="application/json", validators=(validate_corporation_data,))
-    def post(self):
-        corporation = self.request.validated['corporation']
-        corporation.id = generate_id()
-        corporation.store(self.request.registry.db)
-        return {
-            'data': corporation.serialize()
-        }
 
+    @view(content_type="application/json", permission='edit', validators=(validate_patch_corporation_data,))
     def patch(self):
-        print('patch 42')
+
         self.context.__dict__['_data']['name'] = 'new name'
-        print(type(self.context))
+
         self.context.store(self.db)
 
 

@@ -11,7 +11,7 @@ def sync_design(db):
 FIELDS = [
     '_id',
     'name',
-    'title'
+    #'title'
 ]
 
 corporation_all_view = ViewDefinition('corporations', 'all', '''function(doc) {

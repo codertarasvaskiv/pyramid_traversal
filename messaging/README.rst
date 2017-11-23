@@ -1,5 +1,7 @@
 Fire up
 
+0) need to fire up couchdb with circus probably
+
 1)
 ../bin/pserve messaging.ini --reload
 
@@ -15,6 +17,10 @@ curl -X POST localhost:6543/corp -H "Authorization: taras" -H "Content-Type: app
 add corporation with departmanrs
 curl -X POST localhost:6543/corp -H "Authorization: taras" -H "Content-Type: application/json" -d '{"data": {"name":"taras", "title":"job12", "departments": [{"depName": "test", "depTitle": "testTitle"}]}}'
 curl -X GET localhost:6543/corp -H "Authorization: oleg" -H "Content-Type: application/json"
+
+get specific tender, need acc_token
+curl -X GET localhost:6543/corp/2b748e6c278a4717a15e585fd4427443?acc_token=26714998e9e1408e949d92f5dddbe747 -H "Authorization: oleg" -H "Content-Type: application/json"
+
 
 
 
