@@ -15,15 +15,12 @@ from .design import VIEW_MAP
 from .models import Corporation
 from .traversal import Root, root_factory
 from .validators import validate_create_corporation_data, validate_patch_corporation_data
-from .utils import generate_id
-
-
+from .utils import apply_patch, generate_id, save_corporation
 
 
 @view_config(context=Root, renderer='json')
 def view_root(context, request):
     return {'key': 'this is root'}
-
 
 
 class MainResource(object):
@@ -36,7 +33,6 @@ class MainResource(object):
 
 @resource(name='Corporations', path='/corp', factory=root_factory)
 class CorporationsResourse(MainResource):
-
     def __init__(self, request, context):
         super(CorporationsResourse, self).__init__(request, context)
         self.__acl__ = [(Allow, 'editor', 'view')]
@@ -49,13 +45,12 @@ class CorporationsResourse(MainResource):
         view = partial(list_view, self.db)
 
         results = [
-            i['value']  for i in view()
+            i['value'] for i in view()
         ]
         data = {
             'data': results
         }
         return data
-
 
     @view(content_type="application/json", permission='create', validators=(validate_create_corporation_data,))
     def post(self):
@@ -63,14 +58,12 @@ class CorporationsResourse(MainResource):
         corporation.id = generate_id()
         corporation.store(self.request.registry.db)
         return {
-            'data': { 'owner_token': corporation.owner_token }
+            'data': {'owner_token': corporation.owner_token}
         }
-
 
 
 @resource(name='Corporation', path='/corp/{corp_id}', factory=root_factory)
 class CorporationResourse(MainResource):
-
     def __init__(self, request, context):
         super(CorporationResourse, self).__init__(request, context)
 
@@ -82,26 +75,26 @@ class CorporationResourse(MainResource):
             "data": self.context.serialize('view_one')
         }
 
-
     @view(content_type="application/json", permission='edit', validators=(validate_patch_corporation_data,))
     def patch(self):
+        corp = self.context
 
-        self.context.__dict__['_data']['name'] = 'new name'
+        apply_patch(self.request, save=False, src=self.request.validated['corp_src'])
 
-        self.context.store(self.db)
+        save_corporation(self.request)
 
-
+        return {
+            'data': 'success update'
+        }
 
 
 @resource(collection_path='/corp/{corp_id}/dep', path='/corp/{corp_id}/dep/{dep_id}', factory=root_factory)
 class DepartmentResourse(object):
-
     def __init__(self, request, context):
         print('self init was called')
         self.context = context
         self.request = request
         self.db = request.registry.db
-
 
     # def __getitem__(self, key):
     #     dept = Department()

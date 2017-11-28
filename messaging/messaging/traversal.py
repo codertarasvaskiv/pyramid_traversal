@@ -31,8 +31,11 @@ def root_factory(request):
         return root
     request.validated['id'] = request.matchdict['corp_id']
     corporation = request.corporation
-    print('traversal.py 33')
     corporation.__parent__ = root
     request.validated['corporation'] = request.validated['db_doc'] = corporation
-    print('exit root_factory')
+
+    # we need this for patch . We store this raw data from database into this.
+    if request.method != 'GET':
+        request.validated['corp_src'] = corporation.serialize('plain')
+
     return corporation

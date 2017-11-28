@@ -7,9 +7,16 @@ from pyramid.security import (
 from couchdb_schematics.document import SchematicsDocument
 from schematics.models import Model as SchematicsModel
 from schematics.transforms import blacklist, convert, export_loop
-from schematics.types import StringType
-from schematics.types.compound import ListType, ModelType
+from schematics.types import BaseType, StringType
+from schematics.types.compound import DictType, ListType, ModelType
 from schematics.types.serializable import serializable
+
+from .utils import get_now, IsoDateTimeType
+
+
+schematics_embedded_role = SchematicsDocument.Options.roles['embedded'] + blacklist("__parent__")
+
+
 
 
 
@@ -28,6 +35,13 @@ class Model(SchematicsModel):
         return data
 
 
+class Revision(Model):
+    author = StringType()
+    date = IsoDateTimeType(default=get_now)
+    changes = ListType(DictType(BaseType), default=list())
+    rev = StringType()
+
+
 class Department(Model):
 
     depName = StringType()
@@ -40,15 +54,19 @@ class Corporation(SchematicsDocument, Model):
 
     class Options:
         roles = {
+            'plain': (blacklist('_attachments', 'revisions', 'dateModified') + schematics_embedded_role),
             'create': blacklist('_id', '_rev', 'doc_type'),
-            'view_one': (blacklist('_rev', '_id', 'doc_id', 'doc_type', 'owner_token') + SchematicsDocument.Options.roles['embedded'] + blacklist("__parent__")),
+            'view_one': (blacklist('_rev', '_id', 'doc_id', 'doc_type', 'revisions') + SchematicsDocument.Options.roles['embedded'] + blacklist("__parent__")),
             'public': blacklist('_id', '_rev', 'doc_type'),
-            'edit': blacklist('name')
+            'edit': blacklist('owner_token')
         }
 
     departments = ListType(ModelType(Department), default=list(), required=False)
     name = StringType()
     title = StringType()
+
+    dateModified = IsoDateTimeType()
+    revisions = ListType(ModelType(Revision), default=list())
     owner_token = StringType()
     _id = StringType()
     _rev = StringType()
@@ -92,12 +110,11 @@ class Corporation(SchematicsDocument, Model):
         :param raw_data:
             The data to be imported.
         """
-        print("import data is called")
-        data = raw_data
-        del_keys = ['_id', '_rev', 'doc_type']
+        data = self.convert(raw_data, **kw)
+        del_keys = [k for k in data.keys() if
+                    data[k] == self.__class__.fields[k].default or data[k] == getattr(self, k)]
         for k in del_keys:
             del data[k]
-
         self._data.update(data)
         return self
 

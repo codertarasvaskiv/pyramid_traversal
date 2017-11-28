@@ -14,7 +14,9 @@ requires = [
     'pyramid',
     'pyramid_jinja2',
     'schematics == 1.1.1',
-    'waitress'
+    'waitress',
+    'jsonpatch==1.16',
+    'pytz'
 ]
 
 setup(name='messaging',
